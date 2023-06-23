@@ -1,0 +1,21 @@
+
+{
+  "manifest_version": 3,
+
+  "name": "Brave-Gestures",
+  "description": "Clean, open source gesture extension",
+  "version": "1.0.0",
+
+  "permissions": [ "tabs", "history" ],
+
+  "background": {
+	  "service_worker": "service-worker.js"
+  },
+
+  "content_scripts": [
+	  {
+		  "matches": ["http://*/*", "https://*/*"],
+		  "js": ["script.js"]
+	  }
+  ]
+}
