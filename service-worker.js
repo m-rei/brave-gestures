@@ -1,5 +1,5 @@
-let closedTabs = [];
-let tabInfo = {};
+var closedTabs = [];
+var tabInfo = {};
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 	tabInfo[tabId] = {
