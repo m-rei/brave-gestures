@@ -40,9 +40,7 @@ chrome.runtime.onMessage.addListener(
 				break;
 
 			case 'newTab':
-				chrome.tabs.create({
-					url: "about:blank"
-				});
+				chrome.tabs.create({});
 				break;
 				
 			case 'closeTab':
