@@ -19,5 +19,5 @@ Feel free to fork and adjust it for your own needs.
 - [X] selRightTab: ur
 - [X] goBack: l
 - [X] goForward: r
-- [ ] goTop: -
-- [ ] goBottom: -
+- [X] goTop: ru
+- [X] goBottom: rd

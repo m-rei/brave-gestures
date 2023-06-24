@@ -15,9 +15,7 @@ document.querySelector('#save-btn')?.addEventListener('click', _ => {
 		trigger.seq = document.querySelector('#' + trigger.name).value;
 	}
 
-	console.log('saving settings');
 	chrome.storage.sync.set({'settings': settings}).then(_ => {
-		console.log('saving successful, now sending message');
 		chrome.tabs.query({}, tabs => {
 			for (let tab of tabs) {
 				chrome.tabs.sendMessage(tab.id, {trigger: 'reload_settings'}, _ => {

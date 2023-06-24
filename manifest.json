@@ -6,7 +6,8 @@
   "description": "Clean, open source gesture extension",
   "version": "1.0.0",
 
-  "permissions": [ "tabs", "history", "storage" ],
+  "permissions": [ "tabs", "history", "storage", "scripting" ],
+  "host_permissions": ["http://*/*", "https://*/*"],
 
   "background": {
 	  "service_worker": "service-worker.js"

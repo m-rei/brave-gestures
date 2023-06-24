@@ -37,6 +37,14 @@ const defaultSettings = {
 		{
 			name: 'goForward',
 			seq: 'r'
+		},
+		{
+			name: 'scrollTop',
+			seq: 'ru'
+		},
+		{
+			name: 'scrollBottom',
+			seq: 'rd'
 		}
 	]
 };
@@ -46,14 +54,14 @@ var settings = defaultSettings;
 const loadSettings = _ => {
 	chrome.storage.sync.get(['settings']).then(r => {
 		if (r.settings) {
-			console.log('LOADING SETTINGS: ' + JSON.stringify(r.settings));
 			settings = r.settings;
 		} else {
 			settings = defaultSettings;
-			chrome.storage.sync.set({'settings': settings}).then(_ => {
-				console.log('successfully saved default settings');
-			});
+			chrome.storage.sync.set({'settings': settings}).then(_ => {});
 		}
+		settings.triggers.sort((a,b) => {
+			return b.seq.length - a.seq.length;
+		});
 	});
 }
 loadSettings();

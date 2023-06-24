@@ -1,6 +1,10 @@
 var closedTabs = [];
 var tabInfo = {};
 
+chrome.runtime.onInstalled.addListener(d => {
+	chrome.storage.sync.clear();
+});
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 	tabInfo[tabId] = {
 		url: tab.url,
@@ -147,6 +151,44 @@ chrome.runtime.onMessage.addListener(
 
 			case 'goForward':
 				chrome.tabs.goForward();
+				break;
+
+			case 'scrollTop':
+				activeTabs = await chrome.tabs.query({
+					active: true,
+					windowId: currentWindow.id
+				});
+				if (activeTabs.length > 0) {
+					chrome.scripting.executeScript(
+						{
+							target: {
+								tabId: activeTabs[0].id
+							},
+							func: () => {
+								window.scrollBy(0, -document.body.scrollHeight);
+							}
+						}
+					);	
+				}
+				break;
+
+			case 'scrollBottom':
+				activeTabs = await chrome.tabs.query({
+					active: true,
+					windowId: currentWindow.id
+				});
+				if (activeTabs.length > 0) {
+					chrome.scripting.executeScript(
+						{
+							target: {
+								tabId: activeTabs[0].id
+							},
+							func: () => {
+								window.scrollBy(0, document.body.scrollHeight);
+							}
+						}
+					);	
+				}
 				break;
 		}
 	}
