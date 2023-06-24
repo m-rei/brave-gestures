@@ -165,7 +165,10 @@ chrome.runtime.onMessage.addListener(
 								tabId: activeTabs[0].id
 							},
 							func: () => {
-								window.scrollBy(0, -document.body.scrollHeight);
+								const y = document.body.scrollHeight > 0 
+									? document.body.scrollHeight 
+									: document.documentElement.scrollHeight;
+								window.scrollBy(0, -y);
 							}
 						}
 					);	
@@ -184,7 +187,10 @@ chrome.runtime.onMessage.addListener(
 								tabId: activeTabs[0].id
 							},
 							func: () => {
-								window.scrollBy(0, document.body.scrollHeight);
+								const y = document.body.scrollHeight > 0 
+									? document.body.scrollHeight 
+									: document.documentElement.scrollHeight;
+								window.scrollBy(0, y);
 							}
 						}
 					);	
