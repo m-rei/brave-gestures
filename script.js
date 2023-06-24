@@ -198,18 +198,10 @@ const mouseMove = (e) => {
 	}
 }
 
-let preventContextMenu = true;
-const contextMenuController = (e) => {
-	if (preventContextMenu) {
-		e.preventDefault();
-	}
-}
-
 const mouseDown = (e) => {
 	if (e.button != 2) {
 		return;
 	}
-	// preventContextMenu = true;
 
 	ignoreNextTrigger = false;
 	mouseIsDown = true;
@@ -217,9 +209,6 @@ const mouseDown = (e) => {
 
 const mouseUp = (_) => {
 	mouseIsDown = false;
-	if (capturedMoves.length == 0) {
-		preventContextMenu = !preventContextMenu;
-	}
 	capturedCoords = [];
 	capturedMoves = [];
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -227,6 +216,10 @@ const mouseUp = (_) => {
 		detectedTrigger?.fun();
 	}
 	detectedTrigger = null;
+}
+
+const contextMenuController = (e) => {
+	e.preventDefault();
 }
 
 document.addEventListener('keydown', keyDown);
