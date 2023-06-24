@@ -215,6 +215,10 @@ const mouseMove = (e) => {
 }
 
 const mouseDown = (e) => {
+	if (e.button == 0 && mouseIsDown) {
+		ignoreNextTrigger = true;
+		return;
+	}
 	if (e.button != 2) {
 		return;
 	}
