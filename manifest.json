@@ -6,7 +6,7 @@
   "description": "Clean, open source gesture extension",
   "version": "1.0.0",
 
-  "permissions": [ "tabs", "history" ],
+  "permissions": [ "tabs", "history", "storage" ],
 
   "background": {
 	  "service_worker": "service-worker.js"
@@ -17,6 +17,11 @@
 	  "32": "icons/32.png",
 	  "48": "icons/48.png",
 	  "128": "icons/128.png"
+  },
+
+  "action": {
+	  "default_title": "Settings",
+	  "default_popup": "settings.html"
   },
 
   "content_scripts": [

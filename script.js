@@ -1,62 +1,78 @@
-const props = {
+const defaultSettings = {
 	lineWidth: 3,
 	minDistanceBeforeNextCapture: 30,
 	triggers: [
 		{
 			name: 'fullRefresh',
-			seq: 'rldrul',
-			fun: () => chrome.runtime.sendMessage({trigger: 'fullRefresh'})
-		
+			seq: 'rldrul'
 		},
 		{
 			name: 'refresh',
-			seq: 'ldrul',
-			fun: () => chrome.runtime.sendMessage({trigger: 'refresh'})
-		
+			seq: 'ldrul'
 		},
 		{
 			name: 'newTab',
-			seq: 'u',
-			fun: () => chrome.runtime.sendMessage({trigger: 'newTab'})
+			seq: 'u'
 		},
 		{
 			name: 'closeTab',
-			seq: 'd',
-			fun: () => chrome.runtime.sendMessage({trigger: 'closeTab'})
+			seq: 'd'
 		},
 		{
 			name: 'undoCloseTab',
-			seq: 'lr',
-			fun: () => chrome.runtime.sendMessage({trigger: 'undoCloseTab'})
+			seq: 'lr'
 		},
 		{
 			name: 'selLeftTab',
-			seq: 'ul',
-			fun: () => chrome.runtime.sendMessage({trigger: 'selLeftTab'})
+			seq: 'ul'
 		},
 		{
 			name: 'selRightTab',
-			seq: 'ur',
-			fun: () => chrome.runtime.sendMessage({trigger: 'selRightTab'})
+			seq: 'ur'
 		},
 		{
 			name: 'goBack',
-			seq: 'l',
-			fun: () => chrome.runtime.sendMessage({trigger: 'goBack'})
+			seq: 'l'
 		},
 		{
 			name: 'goForward',
-			seq: 'r',
-			fun: () => chrome.runtime.sendMessage({trigger: 'goForward'})
+			seq: 'r'
 		}
 	]
 };
+
+var settings = defaultSettings;
+
+const loadSettings = _ => {
+	chrome.storage.sync.get(['settings']).then(r => {
+		if (r.settings) {
+			console.log('LOADING SETTINGS: ' + JSON.stringify(r.settings));
+			settings = r.settings;
+		} else {
+			settings = defaultSettings;
+			chrome.storage.sync.set({'settings': settings}).then(_ => {
+				console.log('successfully saved default settings');
+			});
+		}
+	});
+}
+loadSettings();
+
+chrome.runtime.onMessage.addListener(
+	async function (req, sender, resp) {
+		console.log('receiving reloda_settings?');
+		if (req.trigger == 'reload_settings') {
+			console.log('received reload_settings');
+			loadSettings();
+			resp();
+		}
+	}
+);
 
 var canvas = document.createElement('canvas');
 var ctx = canvas.getContext('2d');
 var mouseIsDown = false;
 var capturedCoords = [];
-var minDistanceBeforeNextCapture = props.minDistanceBeforeNextCapture;
 var capturedMoves = [];
 var detectedTrigger = null;
 
@@ -73,12 +89,12 @@ canvas.height = window.innerHeight;
 
 ctx.canvas.width = window.innerWidth;
 ctx.canvas.height - window.innerHeight;
-ctx.lineWidth = props.lineWidth;
+ctx.lineWidth = settings.lineWidth;
 ctx.textBaseline = 'top';
 ctx.font = '12pt Georgia';
 
 const detectAndSaveTrigger = () => {
-	const trigger = props.triggers.find(t => movePatternMatch(t.seq));
+	const trigger = settings.triggers.find(t => movePatternMatch(t.seq));
 	if (!trigger) {
 		detectedTrigger = null;
 		return;
@@ -114,14 +130,14 @@ const captureMove = (a, b) => {
 
 const renderLine = (a, b) => {
 	ctx.beginPath();
-	ctx.lineWidth = props.lineWidth + 2;
+	ctx.lineWidth = settings.lineWidth + 1;
 	ctx.strokeStyle = '#fff';
 	ctx.moveTo(a.x, a.y);
 	ctx.lineTo(b.x, b.y);
 	ctx.stroke();
 	
 	ctx.beginPath();
-	ctx.lineWidth = props.lineWidth;
+	ctx.lineWidth = settings.lineWidth;
 	ctx.strokeStyle = '#000';
 	ctx.moveTo(a.x, a.y);
 	ctx.lineTo(b.x, b.y);
@@ -176,7 +192,7 @@ const mouseMove = (e) => {
 			Math.pow(lastCoord.x-newCoord.x, 2) +
 			Math.pow(lastCoord.y-newCoord.y, 2)
 		);
-		if (dist < minDistanceBeforeNextCapture) {
+		if (dist < settings.minDistanceBeforeNextCapture) {
 			return;
 		}
 	}
@@ -212,8 +228,8 @@ const mouseUp = (_) => {
 	capturedCoords = [];
 	capturedMoves = [];
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	if (!ignoreNextTrigger) {
-		detectedTrigger?.fun();
+	if (!ignoreNextTrigger && detectedTrigger) {
+		chrome.runtime.sendMessage({trigger: detectedTrigger.name})
 	}
 	detectedTrigger = null;
 }
