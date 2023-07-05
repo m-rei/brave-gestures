@@ -2,6 +2,7 @@ const defaultSettings = {
 	lineWidth: 3,
 	minDistanceBeforeNextCapture: 30,
 	matchRightMost: 'false',
+	drawOutline: 'true',
 	triggers: [
 		{
 			name: 'fullRefresh',
@@ -138,15 +139,17 @@ const captureMove = (a, b) => {
 }
 
 const renderLine = (a, b) => {
-	ctx.beginPath();
-	ctx.lineWidth = settings.lineWidth + 1;
-	ctx.strokeStyle = '#fff';
-	ctx.moveTo(a.x, a.y);
-	ctx.lineTo(b.x, b.y);
-	ctx.stroke();
+	if (settings.drawOutline === 'true') {
+		ctx.beginPath();
+		ctx.lineWidth = parseInt(settings.lineWidth) + 1;
+		ctx.strokeStyle = '#fff';
+		ctx.moveTo(a.x, a.y);
+		ctx.lineTo(b.x, b.y);
+		ctx.stroke();
+	}
 	
 	ctx.beginPath();
-	ctx.lineWidth = settings.lineWidth;
+	ctx.lineWidth = parseInt(settings.lineWidth);
 	ctx.strokeStyle = '#000';
 	ctx.moveTo(a.x, a.y);
 	ctx.lineTo(b.x, b.y);
