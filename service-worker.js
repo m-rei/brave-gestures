@@ -1,11 +1,11 @@
 var closedTabs = [];
 var tabInfo = {};
 
-chrome.runtime.onInstalled.addListener(d => {
+chrome.runtime.onInstalled.addListener(_ => {
 	chrome.storage.sync.clear();
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function(tabId, _, tab) {
 	tabInfo[tabId] = {
 		url: tab.url,
 		index: tab.index,
@@ -14,7 +14,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 chrome.tabs.onRemoved.addListener(
-	async function (tabId, removeInfo) {
+	async function (tabId, _) {
 		if (tabInfo[tabId]) {
 			closedTabs.push(tabInfo[tabId]);
 			delete tabInfo[tabId];
@@ -23,7 +23,7 @@ chrome.tabs.onRemoved.addListener(
 );
 
 chrome.runtime.onMessage.addListener(
-	async function (req, sender, resp) {
+	async function (req, _, _) {
 		let activeTabs = [];
 		let nextTab = [];
 		let currentWindow = await chrome.windows.getCurrent();

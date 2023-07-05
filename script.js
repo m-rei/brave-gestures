@@ -1,6 +1,7 @@
 const defaultSettings = {
 	lineWidth: 3,
 	minDistanceBeforeNextCapture: 30,
+	matchRightMost: 'false',
 	triggers: [
 		{
 			name: 'fullRefresh',
@@ -67,10 +68,8 @@ const loadSettings = _ => {
 loadSettings();
 
 chrome.runtime.onMessage.addListener(
-	async function (req, sender, resp) {
-		console.log('receiving reloda_settings?');
+	async function (req, _, resp) {
 		if (req.trigger == 'reload_settings') {
-			console.log('received reload_settings');
 			loadSettings();
 			resp();
 		}
@@ -112,9 +111,11 @@ const detectAndSaveTrigger = () => {
 }
 
 const movePatternMatch = (pattern) => {
-	return capturedMoves
-		.join('')
-		.endsWith(pattern);
+	const moves = capturedMoves.join('');
+	if (settings.matchRightMost === 'true') {
+		return moves.endsWith(pattern);
+	}
+	return moves  === pattern;
 }
 
 const captureMove = (a, b) => {
